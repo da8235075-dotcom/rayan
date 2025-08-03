@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صحتك - دليلك الذكي لصحة أفضل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                        dark: '#1F2937',
+                        light: '#F9FAFB'
+                    },
+                    fontFamily: {
+                        'tajawal': ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/css">
+        * {
+            font-family: 'Tajawal', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+        .card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .result-card {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bmi-indicator {
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #3B82F6 0%, #10B981 33%, #F59E0B 66%, #EF4444 100%);
+        }
+        .bmi-marker {
+            position: absolute;
+            top: -5px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #1F2937;
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+        .health-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3B82F6;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-dark py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <div class="flex items-center justify-center mb-4">
+                <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center mr-3">
+                    <i class="fas fa-heartbeat text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-dark">صحتك</h1>
+            </div>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                دليلك الذكي لصحة أفضل، مستوحى من منهج "اللياقة والثقافة الصحية" المعتمد بجامعة الملك سعود
+            </p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Calculator Section -->
+            <div>
+                <div class="card bg-white rounded-2xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-primary">حاسبة مؤشر كتلة الجسم</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">الوزن (كجم)</label>
+                            <div class="relative">
+                                <input type="number" id="weight" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="70" min="1" max="300">
+                                <div class="absolute inset-y-0 left-3 flex items-center text-gray-500">
+                                    <i class="fas fa-weight"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">الطول (سم)</label>
+                            <div class="relative">
+                                <input type="number" id="height" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="175" min="50" max="250">
+                                <div class="absolute inset-y-0 left-3 flex items-center text-gray-500">
+                                    <i class="fas fa-ruler-vertical"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium">العمر</label>
+                        <div class="relative">
+                            <input type="number" id="age" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="30" min="1" max="120">
+                            <div class="absolute inset-y-0 left-3 flex items-center text-gray-500">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium">الجنس</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="maleBtn" class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="male">
+                                <i class="fas fa-mars mr-2"></i>ذكر
+                            </button>
+                            <button id="femaleBtn" class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="female">
+                                <i class="fas fa-venus mr-2"></i>أنثى
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium">مستوى النشاط</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <button class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="active">نشيط</button>
+                            <button class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="moderate">متوسط النشاط</button>
+                            <button class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="inactive">قليل الحركة</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2 font-medium">الأمراض المزمنة (اختياري)</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="diabetes">سكري</button>
+                            <button class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="hypertension">ضغط الدم</button>
+                            <button class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="heart">أمراض قلب</button>
+                            <button class="health-option bg-gray-100 py-3 px-4 rounded-lg border border-gray-200 transition hover:bg-gray-200" data-value="none">لا يوجد</button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button id="calculateBtn" class="bg-primary hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105">
+                            احسب مؤشر كتلة الجسم
+                            <i class="fas fa-calculator ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Health Recommendations -->
+                <div id="recommendationsSection" class="hidden mt-8">
+                    <div class="card bg-white rounded-2xl p-6 md:p-8">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-secondary">التوصيات الصحية</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-light rounded-xl p-5">
+                                <div class="health-icon bg-blue-100 text-primary">
+                                    <i class="fas fa-calendar-alt text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-center mb-2">الأيام الأسبوعية</h3>
+                                <p id="days" class="text-center text-2xl font-bold text-primary">3-5 أيام</p>
+                            </div>
+                            
+                            <div class="bg-light rounded-xl p-5">
+                                <div class="health-icon bg-green-100 text-secondary">
+                                    <i class="fas fa-tachometer-alt text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-center mb-2">شدة التمرين</h3>
+                                <p id="intensity" class="text-center text-2xl font-bold text-secondary">متوسطة</p>
+                            </div>
+                            
+                            <div class="bg-light rounded-xl p-5">
+                                <div class="health-icon bg-purple-100 text-accent">
+                                    <i class="fas fa-clock text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-center mb-2">مدة التمرين</h3>
+                                <p id="duration" class="text-center text-2xl font-bold text-accent">30-45 دقيقة</p>
+                            </div>
+                            
+                            <div class="bg-light rounded-xl p-5">
+                                <div class="health-icon bg-yellow-100 text-amber-500">
+                                    <i class="fas fa-dumbbell text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-center mb-2">نوع التمرين</h3>
+                                <p id="exerciseType" class="text-center text-xl font-bold text-amber-500">كارديو، تمارين مرونة</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 bg-blue-50 border border-blue-100 rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-3 flex items-center">
+                                <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
+                                نصائح خاصة بك
+                            </h3>
+                            <p id="personalTips" class="text-blue-700">
+                                ابدأ بممارسة التمارين الخفيفة لمدة 30 دقيقة يومياً، وزد المدة تدريجياً. احرص على شرب الماء بانتظام وتناول وجبات متوازنة.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="space-y-8">
+                <div id="resultSection" class="hidden">
+                    <div class="card bg-white rounded-2xl p-6 md:p-8 result-card">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-primary">نتائج تحليلك الصحي</h2>
+                        
+                        <div class="text-center mb-6">
+                            <div class="inline-block bg-blue-50 rounded-full p-4">
+                                <div class="w-20 h-20 rounded-full bg-primary flex items-center justify-center mx-auto">
+                                    <span id="bmiValue" class="text-white text-2xl font-bold">22.5</span>
+                                </div>
+                            </div>
+                            <p id="bmiCategory" class="text-xl font-bold mt-3 text-secondary">وزن طبيعي</p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-3 font-medium">مؤشر كتلة الجسم</label>
+                            <div class="relative mb-2">
+                                <div class="bmi-indicator">
+                                    <div class="bmi-marker" style="left: 30%;"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-600">
+                                <span>نحافة</span>
+                                <span>طبيعي</span>
+                                <span>زيادة وزن</span>
+                                <span>سمنة</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-2 font-medium">حالتك الصحية</label>
+                            <div class="bg-light rounded-xl p-4">
+                                <p id="healthStatus" class="text-lg font-bold text-center">سليم</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 border border-green-100 rounded-xl p-5 mb-6">
+                            <h3 class="text-lg font-bold text-green-800 mb-3 flex items-center">
+                                <i class="fas fa-star text-green-500 mr-2"></i>
+                                تقييم صحتك
+                            </h3>
+                            <p id="healthAssessment" class="text-green-700">
+                                حالتك الصحية جيدة، استمر في الحفاظ على نمط حياتك الصحي مع زيادة النشاط البدني تدريجياً.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-purple-50 border border-purple-100 rounded-xl p-5">
+                                <h3 class="text-lg font-bold text-purple-800 mb-3 flex items-center">
+                                    <i class="fas fa-fire text-purple-500 mr-2"></i>
+                                    احتياجك اليومي من السعرات
+                                </h3>
+                                <p id="calorieNeeds" class="text-center text-2xl font-bold text-purple-600">
+                                    <span class="text-3xl">2200</span> سعرة حرارية
+                                </p>
+                                <p class="text-purple-700 text-sm mt-2 text-center">
+                                    (تقديري بناءً على وزنك ونشاطك)
+                                </p>
+                            </div>
+                            
+                            <div class="bg-amber-50 border border-amber-100 rounded-xl p-5">
+                                <h3 class="text-lg font-bold text-amber-800 mb-3 flex items-center">
+                                    <i class="fas fa-utensils text-amber-500 mr-2"></i>
+                                    توصيات غذائية
+                                </h3>
+                                <p id="foodRecommendations" class="text-amber-700">
+                                    تناول وجبات متوازنة تحتوي على البروتين والخضروات والحبوب الكاملة.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <button id="saveBtn" class="w-full bg-secondary hover:bg-green-600 text-white font-bold py-3 rounded-lg transition flex items-center justify-center">
+                            <i class="fas fa-save mr-2"></i>
+                            حفظ النتائج
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Initial Info -->
+                <div id="infoSection">
+                    <div class="card bg-white rounded-2xl p-6 md:p-8">
+                        <h2 class="text-2xl font-bold mb-4 text-center text-primary">كيف يعمل التطبيق؟</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1 mr-3">
+                                    <i class="fas fa-1"></i>
+                                </div>
+                                <p>أدخل بياناتك الأساسية (الوزن، الطول، العمر)</p>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1 mr-3">
+                                    <i class="fas fa-2"></i>
+                                </div>
+                                <p>اختر حالتك الصحية الحالية من الخيارات المتاحة</p>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1 mr-3">
+                                    <i class="fas fa-3"></i>
+                                </div>
+                                <p>احسب مؤشر كتلة الجسم لتحصل على تحليل صحي دقيق</p>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1 mr-3">
+                                    <i class="fas fa-4"></i>
+                                </div>
+                                <p>احصل على توصيات ممارسة التمارين المناسبة لك</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 bg-yellow-50 border border-yellow-100 rounded-xl p-5">
+                            <h3 class="text-lg font-bold text-yellow-800 mb-3 flex items-center">
+                                <i class="fas fa-info-circle text-yellow-500 mr-2"></i>
+                                معلومات هامة
+                            </h3>
+                            <p class="text-yellow-700">
+                                هذه التوصيات مبنية على منهج "اللياقة والثقافة الصحية" من جامعة الملك سعود وهي لأغراض إرشادية فقط. استشر طبيبك قبل البدء بأي برنامج تمارين جديد.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Features Section -->
+        <section class="mt-16">
+            <h2 class="text-2xl font-bold mb-8 text-center text-dark">مميزات تطبيق <span class="text-primary">صحتك</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card bg-white rounded-2xl p-6">
+                    <div class="text-center mb-4">
+                        <div class="inline-block bg-blue-100 text-blue-600 rounded-full p-4">
+                            <i class="fas fa-brain text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">تحليل صحي دقيق</h3>
+                    <p class="text-gray-600 text-center">
+                        يحسب التطبيق مؤشر كتلة الجسم بدقة ويقدم تحليلاً صحياً شاملاً لحالتك بناءً على أحدث التوصيات العلمية.
+                    </p>
+                </div>
+                
+                <div class="card bg-white rounded-2xl p-6">
+                    <div class="text-center mb-4">
+                        <div class="inline-block bg-green-100 text-green-600 rounded-full p-4">
+                            <i class="fas fa-dumbbell text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">توصيات تمارين مخصصة</h3>
+                    <p class="text-gray-600 text-center">
+                        بناءً على حالتك الصحية، يقدم لك التطبيق برنامج تمارين مخصص من حيث الشدة والمدة والأنواع.
+                    </p>
+                </div>
+                
+                <div class="card bg-white rounded-2xl p-6">
+                    <div class="text-center mb-4">
+                        <div class="inline-block bg-purple-100 text-purple-600 rounded-full p-4">
+                            <i class="fas fa-wifi-slash text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">يعمل بدون إنترنت</h3>
+                    <p class="text-gray-600 text-center">
+                        يمكنك استخدام التطبيق في أي وقت ومكان دون الحاجة لاتصال دائم بالإنترنت.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="mt-16 pt-8 border-t border-gray-200 text-center text-gray-600">
+            <p>© 2023 صحتك. جميع الحقوق محفوظة.</p>
+            <p class="mt-2">مستوحى من منهج "اللياقة والثقافة الصحية" بجامعة الملك سعود</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultSection = document.getElementById('resultSection');
+            const infoSection = document.getElementById('infoSection');
+            const recommendationsSection = document.getElementById('recommendationsSection');
+            const healthOptions = document.querySelectorAll('.health-option');
+            const saveBtn = document.getElementById('saveBtn');
+            
+            let selectedActivity = 'moderate';
+            let selectedDisease = 'none';
+            let selectedGender = 'male';
+            
+            // Activity level selection
+            document.querySelectorAll('[data-value="active"], [data-value="moderate"], [data-value="inactive"]').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('[data-value="active"], [data-value="moderate"], [data-value="inactive"]').forEach(opt => 
+                        opt.classList.remove('bg-primary', 'text-white'));
+                    this.classList.add('bg-primary', 'text-white');
+                    selectedActivity = this.getAttribute('data-value');
+                });
+            });
+            
+            // Gender selection
+            document.getElementById('maleBtn').addEventListener('click', function() {
+                document.getElementById('maleBtn').classList.add('bg-primary', 'text-white');
+                document.getElementById('femaleBtn').classList.remove('bg-primary', 'text-white');
+                selectedGender = 'male';
+            });
+
+            document.getElementById('femaleBtn').addEventListener('click', function() {
+                document.getElementById('femaleBtn').classList.add('bg-primary', 'text-white');
+                document.getElementById('maleBtn').classList.remove('bg-primary', 'text-white');
+                selectedGender = 'female';
+            });
+
+            // Disease selection
+            document.querySelectorAll('[data-value="diabetes"], [data-value="hypertension"], [data-value="heart"], [data-value="none"]').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('[data-value="diabetes"], [data-value="hypertension"], [data-value="heart"], [data-value="none"]').forEach(opt => 
+                        opt.classList.remove('bg-primary', 'text-white'));
+                    this.classList.add('bg-primary', 'text-white');
+                    selectedDisease = this.getAttribute('data-value');
+                });
+            });
+            
+            // Calculate BMI
+            calculateBtn.addEventListener('click', function() {
+                const weight = parseFloat(document.getElementById('weight').value);
+                const height = parseFloat(document.getElementById('height').value);
+                const age = parseInt(document.getElementById('age').value);
+                
+                if (!weight || !height || !age) {
+                    alert('الرجاء إدخال جميع البيانات المطلوبة');
+                    return;
+                }
+                
+                // Calculate BMI
+                const heightInMeters = height / 100;
+                const bmi = weight / (heightInMeters * heightInMeters);
+                const roundedBmi = bmi.toFixed(1);
+                
+                // Determine BMI category
+                let bmiCategory, bmiColor;
+                if (bmi < 18.5) {
+                    bmiCategory = 'نحافة';
+                    bmiColor = 'text-blue-500';
+                } else if (bmi >= 18.5 && bmi < 25) {
+                    bmiCategory = 'وزن طبيعي';
+                    bmiColor = 'text-green-500';
+                } else if (bmi >= 25 && bmi < 30) {
+                    bmiCategory = 'زيادة وزن';
+                    bmiColor = 'text-yellow-500';
+                } else {
+                    bmiCategory = 'سمنة';
+                    bmiColor = 'text-red-500';
+                }
+                
+                // Determine health status
+                let healthStatus, healthAssessment;
+                if (selectedDisease !== 'none') {
+                    healthStatus = 'مريض مزمن (' + 
+                        (selectedDisease === 'diabetes' ? 'سكري' : 
+                         selectedDisease === 'hypertension' ? 'ضغط الدم' : 'أمراض قلب') + ')';
+                    healthAssessment = 'نوصي باستشارة طبيب قبل البدء بأي برنامج تمارين. يمكنك البدء بتمارين خفيفة لتحسين صحتك العامة.';
+                } else {
+                    healthStatus = selectedActivity === 'active' ? 'نشيط' : 
+                                 selectedActivity === 'moderate' ? 'متوسط النشاط' : 'قليل الحركة';
+                    healthAssessment = 'حالتك الصحية ' + (selectedDisease === 'none' ? 'جيدة' : 'تتطلب عناية') + 
+                                    '. استمر في الحفاظ على نمط حياتك الصحي مع تنويع التمارين الرياضية.';
+                }
+                
+                // Calculate calorie needs (Harris-Benedict equation)
+                let bmr, calorieNeeds;
+                if (age >= 18) {
+                    // Adult calculation
+                    if (selectedGender === 'male') {
+                        bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+                    } else {
+                        bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+                    }
+                } else {
+                    // Child/teen calculation (Mifflin-St Jeor)
+                    if (selectedGender === 'male') {
+                        bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+                    } else {
+                        bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+                    }
+                }
+                
+                // Adjust for activity level
+                switch(selectedActivity) {
+                    case 'active':
+                        calorieNeeds = bmr * 1.725;
+                        break;
+                    case 'moderate':
+                        calorieNeeds = bmr * 1.55;
+                        break;
+                    default: // inactive
+                        calorieNeeds = bmr * 1.2;
+                }
+                
+                // Adjust for weight goals (simplified)
+                if (bmi < 18.5) {
+                    calorieNeeds *= 1.1; // Gain weight
+                } else if (bmi >= 25) {
+                    calorieNeeds *= 0.9; // Lose weight
+                }
+                
+                // Determine recommendations based on activity level and disease
+                let days, intensity, duration, exerciseType, personalTips, foodRecommendations;
+                
+                if (selectedDisease !== 'none') {
+                    days = '3-4 أيام';
+                    intensity = 'خفيفة';
+                    duration = '20-30 دقيقة';
+                    exerciseType = 'تمارين خفيفة، مشي، يوجا';
+                    personalTips = 'استمع لجسمك ولا تبالغ في التمارين. استشر طبيبك بانتظام.';
+                    foodRecommendations = selectedDisease === 'diabetes' ? 
+                        'ركز على الألياف والبروتين، تجنب السكريات البسيطة. اختر الكربوهيدرات المعقدة مثل الحبوب الكاملة.' :
+                        selectedDisease === 'hypertension' ? 
+                        'قلل من الصوديوم، زد البوتاسيوم (موز، سبانخ). تجنب الأطعمة المعلبة والمصنعة.' :
+                        'اختر الدهون الصحية (زيت الزيتون، المكسرات). تجنب الدهون المشبعة والمتحولة.';
+                } else {
+                    switch(selectedActivity) {
+                        case 'active':
+                            days = '5-6 أيام';
+                            intensity = 'عالية';
+                            duration = '60-90 دقيقة';
+                            exerciseType = 'كارديو، مقاومة، تمارين مرونة';
+                            personalTips = 'حافظ على تنوع التمارين وشدتها. لا تنسَ أيام الراحة والتعافي.';
+                            break;
+                        case 'moderate':
+                            days = '4-5 أيام';
+                            intensity = 'متوسطة';
+                            duration = '45-60 دقيقة';
+                            exerciseType = 'كارديو، تمارين مرونة';
+                            personalTips = 'حافظ على تنوع تمارينك لتطوير جميع جوانب اللياقة البدنية.';
+                            break;
+                        default: // inactive
+                            days = '3-4 أيام';
+                            intensity = 'خفيفة';
+                            duration = '30-45 دقيقة';
+                            exerciseType = 'مشي، سباحة، تمارين مرونة';
+                            personalTips = 'ابدأ ببطء وزِد النشاط تدريجياً. حاول دمج النشاط البدني في روتينك اليومي.';
+                    }
+                }
+                
+                // Update BMI results
+                document.getElementById('bmiValue').textContent = roundedBmi;
+                document.getElementById('bmiCategory').textContent = bmiCategory;
+                document.getElementById('bmiCategory').className = `text-xl font-bold mt-3 ${bmiColor}`;
+                document.getElementById('healthStatus').textContent = healthStatus;
+                document.getElementById('healthAssessment').textContent = healthAssessment;
+                
+                // Update recommendations
+                document.getElementById('days').textContent = days;
+                document.getElementById('intensity').textContent = intensity;
+                document.getElementById('duration').textContent = duration;
+                document.getElementById('exerciseType').textContent = exerciseType;
+                document.getElementById('personalTips').textContent = personalTips;
+                document.getElementById('calorieNeeds').innerHTML = 
+                    `<span class="text-3xl">${Math.round(calorieNeeds)}</span> سعرة حرارية`;
+                document.getElementById('foodRecommendations').textContent = foodRecommendations || 
+                    'تناول وجبات متوازنة تحتوي على البروتين والخضروات والحبوب الكاملة.';
+                
+                // Update BMI marker position
+                let markerPosition;
+                if (bmi < 18.5) {
+                    markerPosition = 10;
+                } else if (bmi < 25) {
+                    markerPosition = 30;
+                } else if (bmi < 30) {
+                    markerPosition = 60;
+                } else {
+                    markerPosition = 90;
+                }
+                document.querySelector('.bmi-marker').style.left = `${markerPosition}%`;
+                
+                // Show results and recommendations
+                resultSection.classList.remove('hidden');
+                infoSection.classList.add('hidden');
+                recommendationsSection.classList.remove('hidden');
+                
+                // Scroll to results
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Save results
+            saveBtn.addEventListener('click', function() {
+                alert('تم حفظ نتائجك بنجاح! يمكنك العودة إليها لاحقاً.');
+                // In a real app, this would save to localStorage or a database
+            });
+        });
+    </script>
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=Ryan-q111/app-bmi" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</html>
